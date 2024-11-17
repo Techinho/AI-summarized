@@ -2,6 +2,7 @@ import React from 'react'
 import { useEffect,useState } from 'react'
 import{copy,linkIcon,loader,tick} from '../assets'
 import { useLazyGetSummaryQuery } from '../services/article'
+import { all } from 'axios'
 
 
 
@@ -11,6 +12,14 @@ const Demo = () => {
     url:"",
     summary:"",
   })
+  useEffect(()=>{
+    const localArticles=localStorage.getItem('articles')
+    if(localArticles){
+      setAllArticles(JSON.parse(localArticles))
+    }
+
+  },[allArticles])
+  const [allArticles,setAllArticles]=useState([])
   const [getSummary,{error,isFetching}]=useLazyGetSummaryQuery()
 
   const handleSubmit = async (e) => {
@@ -21,7 +30,12 @@ const Demo = () => {
     
     if (data?.summary) {
       const newArticle = { ...article, summary: data.summary };
+      const updatedArticles=[newArticle,...allArticles]
+      setAllArticles(updatedArticles);
       setArticle(newArticle);
+      window.localStorage.setItem("articles",JSON.stringify(updatedArticles)
+
+      )
       console.log(newArticle);
     }
   };
